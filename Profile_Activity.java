@@ -11,6 +11,5 @@ public class Profile_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_);
         txtEmailaddress=(TextView)findViewById(R.id.txtEmail);
-        txtEmailaddress.setText(getIntent().getExtras().getString("Email"));
     }
 }
