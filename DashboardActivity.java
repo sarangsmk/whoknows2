@@ -1,6 +1,7 @@
 package gq.smktech.whoknows;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -30,12 +31,17 @@ public class DashboardActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+        getSupportActionBar().setTitle("Who Knows"); // for set actionbar title
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Back button to parent activity
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         user=(TextView)findViewById(R.id.user);
         fab=(FloatingActionButton)findViewById(R.id.fab);
 
         Intent i=getIntent();
         userName=i.getStringExtra("Email");
         user.setText(userName);
+
     }
     public void Question(View v)
     {
