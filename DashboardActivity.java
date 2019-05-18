@@ -26,6 +26,8 @@ public class DashboardActivity extends AppCompatActivity {
     public static String userName;
     FloatingActionButton fab;
 
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference dbAttendance;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -40,10 +42,16 @@ public class DashboardActivity extends AppCompatActivity {
         //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         user=(TextView)findViewById(R.id.user);
         fab=(FloatingActionButton)findViewById(R.id.fab);
+        TextView question = (TextView) findViewById(R.id.question);
+        String questionFromDb = ref.child("who-knows-ccf3c").child("LTetfX5-Sm2ZqF8ae57").getKey();
+        question.setText();
+
 
         Intent i=getIntent();
         userName=i.getStringExtra("Email");
         user.setText(userName);
+
+
 
     }
     public void Question(View v)
