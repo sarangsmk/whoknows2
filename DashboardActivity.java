@@ -44,7 +44,7 @@ public class DashboardActivity extends AppCompatActivity {
         fab=(FloatingActionButton)findViewById(R.id.fab);
         TextView question = (TextView) findViewById(R.id.question);
         String questionFromDb = ref.child("who-knows-ccf3c").child("LTetfX5-Sm2ZqF8ae57").getKey();
-        question.setText();
+        //question.setText();
 
 
         Intent i=getIntent();

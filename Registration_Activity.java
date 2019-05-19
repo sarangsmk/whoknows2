@@ -19,21 +19,32 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.*;
 
 public class Registration_Activity extends AppCompatActivity {
-    private EditText txtEmail;
+    private EditText txtEmail,txtName;
     private EditText txtPassword,txtTags;
     public ImageView userPhoto;
     static int PReqCode =1;
     static int REQUESCODE=1;
     Uri pickedImageUri;
     private FirebaseAuth firebaseAuth;
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
+    String firebase_Image_Url;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    StorageReference storageRef = storage.getReferenceFromUrl("gs://who-knows-ccf3c.appspot.com");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration_);
+        txtName = (EditText) findViewById(R.id.txtName);
         txtEmail=(EditText) findViewById(R.id.txtEmail);
         txtPassword=(EditText) findViewById(R.id.txtPassword);
         txtTags=(EditText) findViewById(R.id.txtTags);
@@ -93,7 +104,7 @@ public class Registration_Activity extends AppCompatActivity {
     }
 
     public void btnRegister(View v) {
-        if (txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+        if (txtName.getText().toString().isEmpty() || txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
             Toast.makeText(Registration_Activity.this, "Fill All fields", Toast.LENGTH_LONG).show();
 
         } else {
@@ -102,6 +113,7 @@ public class Registration_Activity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<com.google.firebase.auth.AuthResult> task) {
                     progressDialog.dismiss();
+                    register();
                     if (task.isSuccessful()) {
                         Toast.makeText(Registration_Activity.this, "Registration Successfull", Toast.LENGTH_LONG).show();
                         Intent i = new Intent(Registration_Activity.this, Login_Activity.class);
@@ -115,6 +127,37 @@ public class Registration_Activity extends AppCompatActivity {
         }
     }
 
+    public void register()
+    {
+        String user = txtName.getText().toString();
+        DatabaseReference dbuser = ref;
+        dbuser.child(user).child("Name").setValue(txtName.getText().toString());
+        dbuser.child(user).child("Email").setValue(txtEmail.getText().toString());
+        dbuser.child(user).child("Tags").setValue(txtTags.getText().toString());
+        uploadDp();
+        dbuser.child(user).child("dp").setValue(firebase_Image_Url);
+    }
+
+    public void uploadDp()
+    {
+        StorageReference childRef = storageRef.child(txtName.getText().toString());
+
+        //uploading the image
+        UploadTask uploadTask = childRef.putFile(pickedImageUri);
+        String link = uploadTask.getResult().getMetadata().getReference().getDownloadUrl().toString();
+
+        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(Registration_Activity.this, "Upload successful", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(Registration_Activity.this, "Upload Failed -> " + e, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
