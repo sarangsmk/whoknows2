@@ -13,6 +13,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,12 +42,12 @@ public class DashboardActivity extends AppCompatActivity {
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
     FirebaseAuth firebaseAuth;
-    FirebaseFirestore firebaseFirestore;
-    FirebaseDatabase mDatabase;
-    FirebaseAuth.AuthStateListener mAuthListener;
     String userid;
     ListView listView;
     SharedPreferences sharedPreferences;
+    RecyclerView recyclerView;
+    ArrayList<post> list;
+    MyAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -59,7 +61,6 @@ public class DashboardActivity extends AppCompatActivity {
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);//Back button to parent activity
         //getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         user=(TextView)findViewById(R.id.user);
-        listView = findViewById(R.id.listView);
         fab=(FloatingActionButton)findViewById(R.id.fab);
         TextView question = (TextView) findViewById(R.id.question);
         String questionFromDb = ref.child("who-knows-ccf3c").child("LTetfX5-Sm2ZqF8ae57").getKey();
@@ -75,44 +76,35 @@ public class DashboardActivity extends AppCompatActivity {
         Intent i=getIntent();
         userName=i.getStringExtra("Email");
         //user.setText(userName);
+        recyclerView =(RecyclerView)findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        list = new ArrayList<post>();
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+            {
+                post p=dataSnapshot1.getValue(post.class);
+                list.add(p);
+            }
+            adapter=new MyAdapter(DashboardActivity.this,list);
+            recyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                Toast.makeText(DashboardActivity.this, "Something Went Wrong", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         //Reading Posts From Database
         FirebaseUser user = firebaseAuth.getCurrentUser();
         userid = user.getUid();
 
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    // User is signed in
-                    Toast.makeText(DashboardActivity.this, "Successfully signed in with: " + user.getEmail(), Toast.LENGTH_SHORT).show();
-
-                } else {
-                    // User is signed out
-                    Toast.makeText(DashboardActivity.this, "Successfully signed out.", Toast.LENGTH_SHORT).show();
-                }
-                // ...
-            }
-        };
-
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                showData(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
     }
 
-    private void showData(DataSnapshot dataSnapshot) {
+//    private void showData(DataSnapshot dataSnapshot) {
 //        for(DataSnapshot ds : dataSnapshot.getChildren()){
 //            posts post = new posts();
 //            post.setQuestion(ds.child(userid).getValue(posts.class).getQuestion()); //set the Question
@@ -131,7 +123,7 @@ public class DashboardActivity extends AppCompatActivity {
 //            ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.list_content,array);
 //            listView.setAdapter(adapter);
 //        }
-    }
+//    }
 
 
 

@@ -1,13 +1,20 @@
 package gq.smktech.whoknows;
 
-public class posts {
+public class post {
     private String question;
     private String description;
     private String mediaLink;
     private String postedBy;
 
-    public posts() {
+    public post() {
 
+    }
+
+    public post(String question, String description, String mediaLink, String postedBy) {
+        this.question = question;
+        this.description = description;
+        this.mediaLink = mediaLink;
+        this.postedBy = postedBy;
     }
 
     public String getQuestion() {
