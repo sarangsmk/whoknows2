@@ -2,6 +2,7 @@ package gq.smktech.whoknows;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -14,10 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -104,7 +107,7 @@ public class Registration_Activity extends AppCompatActivity {
     }
 
     public void btnRegister(View v) {
-        if (txtName.getText().toString().isEmpty() || txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
+        if (pickedImageUri==null || txtName.getText().toString().isEmpty() || txtEmail.getText().toString().isEmpty() || txtPassword.getText().toString().isEmpty()) {
             Toast.makeText(Registration_Activity.this, "Fill All fields", Toast.LENGTH_LONG).show();
 
         } else {
@@ -129,34 +132,80 @@ public class Registration_Activity extends AppCompatActivity {
 
     public void register()
     {
-        String user = txtName.getText().toString();
-        DatabaseReference dbuser = ref;
-        dbuser.child(user).child("Name").setValue(txtName.getText().toString());
-        dbuser.child(user).child("Email").setValue(txtEmail.getText().toString());
-        dbuser.child(user).child("Tags").setValue(txtTags.getText().toString());
+//        String user = txtName.getText().toString();
         uploadDp();
-        dbuser.child(user).child("dp").setValue(firebase_Image_Url);
+
+    }
+    private String getFileExtension(Uri uri2)
+    {
+        ContentResolver contentResolver=getContentResolver();
+        MimeTypeMap mime=MimeTypeMap.getSingleton();
+        return  mime.getExtensionFromMimeType(contentResolver.getType(uri2));
     }
 
     public void uploadDp()
     {
-        StorageReference childRef = storageRef.child(txtName.getText().toString());
+        //StorageReference childRef = storageRef.child(txtName.getText().toString());
 
         //uploading the image
-        UploadTask uploadTask = childRef.putFile(pickedImageUri);
-        String link = uploadTask.getResult().getMetadata().getReference().getDownloadUrl().toString();
+        final UploadTask uploadTask;
+       // UploadTask uploadTask = childRef.putFile(pickedImageUri);
+       // String link = uploadTask.getResult().getMetadata().getReference().getDownloadUrl().toString();
+        final StorageReference fileRefernce = storageRef.child(System.currentTimeMillis()+"."+getFileExtension(pickedImageUri));
+//        uploadTask = fileRefernce.putFile(pickedImageUri);
+//
+//        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                Toast.makeText(Registration_Activity.this, fileRefernce.getDownloadUrl().toString(), Toast.LENGTH_SHORT).show();
+//
+//                    Uri uri = Uri.parse("http://" + fileRefernce.getDownloadUrl().toString()); // missing 'http://' will cause crashed
+//                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                    startActivity(intent);
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception e) {
+//                Toast.makeText(Registration_Activity.this, "Upload Failed -> " + e, Toast.LENGTH_SHORT).show();
+//            }
+//        });
 
-        uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(Registration_Activity.this, "Upload successful", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(Registration_Activity.this, "Upload Failed -> " + e, Toast.LENGTH_SHORT).show();
-            }
-        });
+
+        if (pickedImageUri != null) {
+            final StorageReference imgReference = fileRefernce.child(pickedImageUri.getLastPathSegment());
+            uploadTask = imgReference.putFile(pickedImageUri);
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+
+                    return imgReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri taskResult = task.getResult();
+//                        Uri uri = Uri.parse(taskResult.toString()); // missing 'http://' will cause crashed
+//                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+//                        startActivity(intent);
+                        firebase_Image_Url = taskResult.toString();
+//                        FriendlyMessage message = new FriendlyMessage(null, mUsername, taskResult.toString());
+//                        mMessagesDatabaseReference.push().setValue(message);
+                        String user = ref.push().getKey();
+                        DatabaseReference dbuser = ref;
+                        dbuser.child(user).child("Name").setValue(txtName.getText().toString());
+                        dbuser.child(user).child("Email").setValue(txtEmail.getText().toString());
+                        dbuser.child(user).child("Tags").setValue(txtTags.getText().toString());
+                        dbuser.child(user).child("dp").setValue(firebase_Image_Url);
+                    }
+                }
+            });
+        }
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

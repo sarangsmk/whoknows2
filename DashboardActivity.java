@@ -49,7 +49,7 @@ public class DashboardActivity extends AppCompatActivity {
 
         Intent i=getIntent();
         userName=i.getStringExtra("Email");
-        user.setText(userName);
+        //user.setText(userName);
 
 
 
