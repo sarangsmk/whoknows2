@@ -29,11 +29,15 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.*;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class Registration_Activity extends AppCompatActivity {
     private EditText txtEmail,txtName;
     private EditText txtPassword,txtTags;
-    public ImageView userPhoto;
+    public CircleImageView userPhoto;
     static int PReqCode =1;
     static int REQUESCODE=1;
     Uri pickedImageUri;
@@ -51,7 +55,7 @@ public class Registration_Activity extends AppCompatActivity {
         txtEmail=(EditText) findViewById(R.id.txtEmail);
         txtPassword=(EditText) findViewById(R.id.txtPassword);
         txtTags=(EditText) findViewById(R.id.txtTags);
-        userPhoto=(ImageView) findViewById(R.id.userPhoto);
+        userPhoto=findViewById(R.id.userPhoto);
         firebaseAuth=FirebaseAuth.getInstance();
 
 
@@ -61,13 +65,25 @@ public class Registration_Activity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(Build.VERSION.SDK_INT >=22)
+                if(Build.VERSION.SDK_INT >=Build.VERSION_CODES.M)
                 {
-                    checkAndRequestForPermission();
+                    if(ContextCompat.checkSelfPermission(Registration_Activity.this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED)
+                    {
+                        Toast.makeText(Registration_Activity.this, "Permission Denied", Toast.LENGTH_SHORT).show();
+                        ActivityCompat.requestPermissions(Registration_Activity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
+                    }
+                    else
+                    {
+
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .start(Registration_Activity.this);
+                    }
+
+
                 }
                 else
                 {
-                    openGallery();
                 }
             }
         });
@@ -82,28 +98,11 @@ public class Registration_Activity extends AppCompatActivity {
 
     private void openGallery() {
 
-        Intent galleryIntent=new Intent(Intent.ACTION_GET_CONTENT);
-        galleryIntent.setType("image/*");
-        startActivityForResult(galleryIntent,REQUESCODE);
+//        Intent galleryIntent=new Intent(Intent.ACTION_GET_CONTENT);
+//        galleryIntent.setType("image/*");
+//        startActivityForResult(galleryIntent,REQUESCODE);
 
-    }
 
-    private void checkAndRequestForPermission() {
-
-        if (ContextCompat.checkSelfPermission(Registration_Activity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(Registration_Activity.this,Manifest.permission.READ_EXTERNAL_STORAGE))
-            {
-                Toast.makeText(Registration_Activity.this,"Please accept requireed permissions",Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                ActivityCompat.requestPermissions(Registration_Activity.this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},PReqCode);
-            }
-        }
-        else
-        {
-            openGallery();
-        }
     }
 
     public void btnRegister(View v) {
@@ -211,12 +210,22 @@ public class Registration_Activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (data!= null)
-        {
-            pickedImageUri=data.getData();
-
-            userPhoto.setImageURI(pickedImageUri);
-
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                pickedImageUri = result.getUri();
+                userPhoto.setImageURI(pickedImageUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
+
+//        if (data!= null)
+//        {
+//            pickedImageUri=data.getData();
+//
+//            userPhoto.setImageURI(pickedImageUri);
+//
+//        }
     }
 }
