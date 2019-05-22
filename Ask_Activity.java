@@ -1,5 +1,8 @@
 package gq.smktech.whoknows;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -11,6 +14,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -20,8 +25,11 @@ public class Ask_Activity extends AppCompatActivity {
     public TextView user;
     Button Post;
 
-    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
     DatabaseReference dbAttendance;
+    SharedPreferences sharedPreferences;
+
+    String userid;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -36,7 +44,8 @@ public class Ask_Activity extends AppCompatActivity {
 
         user.setText(DashboardActivity.userName);
 
-
+        sharedPreferences = getSharedPreferences("userDetails", Context.MODE_PRIVATE);
+        userid = sharedPreferences.getString("userMail", null);
 
 
 
@@ -62,13 +71,15 @@ public class Ask_Activity extends AppCompatActivity {
             //Ask.child(id).setValue(ask);
             id=ref.push().getKey();
             DatabaseReference dbuser = ref.child(id);
-            dbuser.child(uName);
-            dbuser.child(uName).child("Question").setValue(question);
-            dbuser.child(uName).child("Description").setValue(description);
-            dbuser.child(uName).child("Status").setValue(status);
+            dbuser.child("Question").setValue(question);
+            dbuser.child("Description").setValue(description);
+            dbuser.child("Status").setValue(status);
+            dbuser.child("By").setValue(userid);
 
 
-            Toast.makeText(this,"Question Posted from "+uName,Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Question Posted as "+uName,Toast.LENGTH_LONG).show();
+            Intent i=new Intent(Ask_Activity.this,DashboardActivity.class);
+            startActivity(i);
         }
         else
         {
