@@ -8,11 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     Context context;
@@ -34,6 +30,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
         myViewHolder.question.setText(posts.get(i).getQuestion());
+        myViewHolder.description.setText(posts.get(i).getDescription());
+        myViewHolder.postedOn.setText(posts.get(i).getPostedOn());
+        myViewHolder.postedBy.setText(posts.get(i).getPostedBy());
         //Glide.with(context).load(posts.get(i).getMediaLink()).into(myViewHolder.proPic);
 
     }
@@ -46,12 +45,15 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     class MyViewHolder extends  RecyclerView.ViewHolder
 
     {
-        TextView question;
+        TextView question,description,postedOn,postedBy;
         //CircleImageView proPic;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
             question = (TextView)itemView.findViewById(R.id.txtQuestion);
+            description =itemView.findViewById(R.id.txtDescription);
+            postedOn = itemView.findViewById(R.id.txtDate);
+            postedBy = itemView.findViewById(R.id.txtUser);
            // proPic = (CircleImageView)itemView.findViewById(R.id.proPic);
         }
     }

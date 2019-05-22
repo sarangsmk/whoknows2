@@ -5,16 +5,18 @@ public class post {
     private String description;
     private String mediaLink;
     private String postedBy;
+    private String postedOn;
 
     public post() {
 
     }
 
-    public post(String question, String description, String mediaLink, String postedBy) {
+    public post(String question, String description, String mediaLink, String postedBy,String postedOn) {
         this.question = question;
         this.description = description;
         this.mediaLink = mediaLink;
         this.postedBy = postedBy;
+        this.postedOn = postedOn;
     }
 
     public String getQuestion() {
@@ -47,5 +49,13 @@ public class post {
 
     public void setPostedBy(String postedBy) {
         this.postedBy = postedBy;
+    }
+
+    public String getPostedOn() {
+        return postedOn;
+    }
+
+    public void setPostedOn(String postedOn) {
+        this.postedOn = postedOn;
     }
 }

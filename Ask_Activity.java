@@ -19,6 +19,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 
 public class Ask_Activity extends AppCompatActivity {
     EditText etQuestion,etDescription;
@@ -65,16 +70,18 @@ public class Ask_Activity extends AppCompatActivity {
         String id;
         if(!TextUtils.isEmpty(question))
         {
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
             //String id=Ask.push().getKey();
             //Ask ask=new Ask(question,description,uName);
             //Ask.child(id).setValue(ask);
             id=ref.push().getKey();
             DatabaseReference dbuser = ref.child(id);
-            dbuser.child("Question").setValue(question);
-            dbuser.child("Description").setValue(description);
-            dbuser.child("Status").setValue(status);
-            dbuser.child("By").setValue(userid);
+            dbuser.child("question").setValue(question);
+            dbuser.child("description").setValue(description);
+            dbuser.child("status").setValue(status);
+            dbuser.child("by").setValue(userid);
+            dbuser.child("postedOn").setValue(date);
 
 
             Toast.makeText(this,"Question Posted as "+uName,Toast.LENGTH_LONG).show();
