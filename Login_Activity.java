@@ -2,7 +2,6 @@ package gq.smktech.whoknows;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +23,7 @@ public class Login_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_);
-        txtEmail=(EditText)findViewById(R.id.txtEmail);
+        txtEmail=(EditText)findViewById(R.id.txtComment);
         txtPassword=(EditText)findViewById(R.id.txtPassword);
         firebaseAuth=FirebaseAuth.getInstance();
     }

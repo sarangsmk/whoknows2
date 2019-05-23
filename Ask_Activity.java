@@ -80,7 +80,7 @@ public class Ask_Activity extends AppCompatActivity {
             dbuser.child("question").setValue(question);
             dbuser.child("description").setValue(description);
             dbuser.child("status").setValue(status);
-            dbuser.child("by").setValue(userid);
+            dbuser.child("postedBy").setValue(userid);
             dbuser.child("postedOn").setValue(date);
 
 

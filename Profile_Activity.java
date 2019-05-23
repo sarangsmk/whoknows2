@@ -10,6 +10,6 @@ public class Profile_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_);
-        txtEmailaddress=(TextView)findViewById(R.id.txtEmail);
+        txtEmailaddress=(TextView)findViewById(R.id.txtComment);
     }
 }
