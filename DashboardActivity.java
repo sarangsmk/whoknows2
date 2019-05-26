@@ -71,7 +71,6 @@ public class DashboardActivity extends AppCompatActivity {
 
 
         currentUser = firebaseAuth.getCurrentUser();
-        Toast.makeText(this, "Url->"+currentUser.getPhotoUrl(), Toast.LENGTH_SHORT).show();
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("userMail",userid);

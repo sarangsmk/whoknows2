@@ -1,22 +1,26 @@
 package gq.smktech.whoknows;
 
+import android.net.Uri;
+
 public class post {
     private String question;
     private String description;
     private String mediaLink;
     private String postedBy;
     private String postedOn;
+    private String dp;
 
     public post() {
 
     }
 
-    public post(String question, String description, String mediaLink, String postedBy,String postedOn) {
+    public post(String question, String description, String mediaLink, String postedBy,String postedOn,String dp) {
         this.question = question;
         this.description = description;
         this.mediaLink = mediaLink;
         this.postedBy = postedBy;
         this.postedOn = postedOn;
+        this.dp = dp;
     }
 
     public String getQuestion() {
@@ -58,4 +62,13 @@ public class post {
     public void setPostedOn(String postedOn) {
         this.postedOn = postedOn;
     }
+
+    public String getDp() {
+        return dp;
+    }
+
+    public void setDp(String dp) {
+        this.dp = dp;
+    }
+
 }

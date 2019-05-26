@@ -11,7 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -39,6 +43,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         myViewHolder.description.setText(posts.get(i).getDescription());
         myViewHolder.postedOn.setText(posts.get(i).getPostedOn());
         myViewHolder.postedBy.setText(posts.get(i).getPostedBy());
+        Glide.with(context).load(posts.get(i).getDp()).into(myViewHolder.proPic);
 
         //Glide.with(context).load(posts.get(i).getMediaLink()).into(myViewHolder.proPic);
 
@@ -53,7 +58,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     {
         TextView question,description,postedOn,postedBy;
-        //CircleImageView proPic;
+        CircleImageView proPic;
 
         public MyViewHolder(@NonNull final View itemView) {
             super(itemView);
@@ -61,6 +66,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             description =itemView.findViewById(R.id.txtDescription);
             postedOn = itemView.findViewById(R.id.txtDate);
             postedBy = itemView.findViewById(R.id.txtUser);
+            proPic = itemView.findViewById(R.id.proPic);
 
             sharedPreferences =context.getSharedPreferences("questionDetails", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();

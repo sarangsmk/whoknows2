@@ -15,6 +15,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,10 +30,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class Ask_Activity extends AppCompatActivity {
     EditText etQuestion,etDescription;
     public TextView user;
+    CircleImageView userPhoto;
     Button Post;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
@@ -43,7 +47,8 @@ public class Ask_Activity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
 
     String userid;
-    String dpLink;
+    FirebaseAuth mAuth;
+    FirebaseUser currentUser;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -51,43 +56,24 @@ public class Ask_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ask);
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser=mAuth.getCurrentUser();
+
         user=(TextView)findViewById(R.id.user);
+        userPhoto = findViewById(R.id.userPhoto);
         etQuestion=(EditText)findViewById(R.id.question);
         etDescription=(EditText)findViewById(R.id.description);
         Post=(Button)findViewById(R.id.btnPost);
 
-        user.setText(DashboardActivity.userName);
+        user.setText(currentUser.getDisplayName());
+        Glide.with(Ask_Activity.this).load(currentUser.getPhotoUrl()).into(userPhoto);
+
 
         sharedPreferences = getSharedPreferences("userDetails", Context.MODE_PRIVATE);
         userid = sharedPreferences.getString("userMail", null);
 
-        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
-        //Retrieving user Image / profile data
-        //list = new ArrayList<profile>();
-        refProfile.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
-                {
-                    //profile prfl = dataSnapshot.getValue(profile.class);
-//                    profile p = dataSnapshot.getValue(profile.class);
-                    Toast.makeText(Ask_Activity.this, "Dp-> "+dataSnapshot.getChildrenCount(), Toast.LENGTH_SHORT).show();
-//                    if(prfl.getEmail()== userid) {
-//                        dpLink=prfl.getDp().toString();
-//                        Toast.makeText(Ask_Activity.this, "Dp "+dpLink, Toast.LENGTH_SHORT).show();
-//                        //list.add(prfl);
-//                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        //refProfile.child("Temp").setValue(null);
     }
 
 
@@ -95,8 +81,8 @@ public class Ask_Activity extends AppCompatActivity {
     {
         String question=etQuestion.getText().toString();
         String description=etDescription.getText().toString();
-        String uName=DashboardActivity.userName.toString();
-        uName=uName.replace(".", ",");
+        //String uName=DashboardActivity.userName.toString();
+        //uName=uName.replace(".", ",");
         String status="Open";
         String id;
         if(!TextUtils.isEmpty(question))
@@ -112,12 +98,12 @@ public class Ask_Activity extends AppCompatActivity {
             dbuser.child("question").setValue(question);
             dbuser.child("description").setValue(description);
             dbuser.child("status").setValue(status);
-            dbuser.child("postedBy").setValue(userid);
+            dbuser.child("postedBy").setValue(currentUser.getEmail());
             dbuser.child("postedOn").setValue(date);
-            dbuser.child("dp").setValue(dpLink);
+            dbuser.child("dp").setValue(currentUser.getPhotoUrl().toString());
 
 
-            Toast.makeText(this,"Question Posted as "+uName,Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"Question Posted as "+currentUser.getDisplayName(),Toast.LENGTH_LONG).show();
             Intent i=new Intent(Ask_Activity.this,DashboardActivity.class);
             startActivity(i);
         }
