@@ -23,6 +23,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     Context context;
     ArrayList<post> posts;
     SharedPreferences sharedPreferences;
+    private OnItemClickListner mListner;
+
+    public interface OnItemClickListner{
+        void OnItemClick(int position);
+    }
+
+    public void setOnItemClickListner(OnItemClickListner listner)
+    {
+        mListner=listner;
+    }
 
     public MyAdapter(Context c,ArrayList<post> p)
     {
@@ -79,11 +89,26 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    context.startActivity(new Intent(context, CommentActivity.class));
-//
-//                    Toast.makeText(context, question.getText().toString(), Toast.LENGTH_SHORT).show();
+                    if(mListner != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION)
+                        {
+                            mListner.OnItemClick(position);
+                        }
+                    }
                 }
             });
+
+
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    context.startActivity(new Intent(context, CommentActivity.class));
+////
+////                    Toast.makeText(context, question.getText().toString(), Toast.LENGTH_SHORT).show();
+//                }
+//            });
            // proPic = (CircleImageView)itemView.findViewById(R.id.proPic);
         }
     }

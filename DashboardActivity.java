@@ -35,7 +35,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
-public class DashboardActivity extends AppCompatActivity {
+public class DashboardActivity extends AppCompatActivity implements MyAdapter.OnItemClickListner{
     private TextView user;
     public static String userName;
     FloatingActionButton fab;
@@ -48,6 +48,7 @@ public class DashboardActivity extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     RecyclerView recyclerView;
     ArrayList<post> list;
+    ArrayList<MyAdapter> list2;
     MyAdapter adapter;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -94,6 +95,7 @@ public class DashboardActivity extends AppCompatActivity {
             }
             adapter=new MyAdapter(DashboardActivity.this,list);
             recyclerView.setAdapter(adapter);
+            adapter.setOnItemClickListner(DashboardActivity.this);
             }
 
             @Override
@@ -172,5 +174,17 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(i);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void OnItemClick(int position) {
+        Intent detailIntent = new Intent(this,CommentActivity.class);
+        post clickedItem = list.get(position);
+        detailIntent.putExtra("question",clickedItem.getQuestion());
+        detailIntent.putExtra("description",clickedItem.getDescription());
+        detailIntent.putExtra("postedBy",clickedItem.getPostedBy());
+        detailIntent.putExtra("postedOn",clickedItem.getPostedOn());
+        detailIntent.putExtra("dp",clickedItem.getDp());
+        startActivity(detailIntent);
     }
 }
