@@ -23,6 +23,8 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.*;
@@ -37,7 +39,7 @@ public class Registration_Activity extends AppCompatActivity {
     public CircleImageView userPhoto;
     static int PReqCode =1;
     static int REQUESCODE=1;
-    Uri pickedImageUri;
+    Uri pickedImageUri,userProfilePhotoUri;
     private FirebaseAuth firebaseAuth;
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
     String firebase_Image_Url;
@@ -114,6 +116,7 @@ public class Registration_Activity extends AppCompatActivity {
                     progressDialog.dismiss();
                     register();
                     if (task.isSuccessful()) {
+
                         Toast.makeText(Registration_Activity.this, "Registration Successfull", Toast.LENGTH_LONG).show();
                         Intent i = new Intent(Registration_Activity.this, Login_Activity.class);
                         startActivity(i);
@@ -188,18 +191,43 @@ public class Registration_Activity extends AppCompatActivity {
 //                        Uri uri = Uri.parse(taskResult.toString()); // missing 'http://' will cause crashed
 //                        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
 //                        startActivity(intent);
+                        userProfilePhotoUri = taskResult;
                         firebase_Image_Url = taskResult.toString();
 //                        FriendlyMessage message = new FriendlyMessage(null, mUsername, taskResult.toString());
 //                        mMessagesDatabaseReference.push().setValue(message);
                         String user = ref.push().getKey();
                         DatabaseReference dbuser = ref;
-                        dbuser.child(user).child("Name").setValue(txtName.getText().toString());
-                        dbuser.child(user).child("Email").setValue(txtEmail.getText().toString());
-                        dbuser.child(user).child("Tags").setValue(txtTags.getText().toString());
+                        dbuser.child(user).child("name").setValue(txtName.getText().toString());
+                        dbuser.child(user).child("email").setValue(txtEmail.getText().toString());
+                        dbuser.child(user).child("tags").setValue(txtTags.getText().toString());
                         dbuser.child(user).child("dp").setValue(firebase_Image_Url);
+                        try {
+                            Thread.sleep(2000);
+                            FirebaseUser currentUser=firebaseAuth.getCurrentUser();
+                            UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(txtName.getText().toString())
+                                    .setPhotoUri(userProfilePhotoUri)
+                                    .build();
+                            currentUser.updateProfile(profileUpdate).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                       // Toast.makeText(Registration_Activity.this, "Done", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                            //Toast.makeText(Registration_Activity.this, "image->"+userProfilePhotoUri, Toast.LENGTH_SHORT).show();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
             });
+
+
+
         }
 
     }

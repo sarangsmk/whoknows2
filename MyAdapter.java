@@ -39,6 +39,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         myViewHolder.description.setText(posts.get(i).getDescription());
         myViewHolder.postedOn.setText(posts.get(i).getPostedOn());
         myViewHolder.postedBy.setText(posts.get(i).getPostedBy());
+
         //Glide.with(context).load(posts.get(i).getMediaLink()).into(myViewHolder.proPic);
 
     }

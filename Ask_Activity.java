@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -16,10 +17,14 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -31,10 +36,14 @@ public class Ask_Activity extends AppCompatActivity {
     Button Post;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
+    DatabaseReference refProfile = FirebaseDatabase.getInstance().getReferenceFromUrl("https://who-knows-ccf3c.firebaseio.com/Users");
+    ArrayList<profile>list;
+
     DatabaseReference dbAttendance;
     SharedPreferences sharedPreferences;
 
     String userid;
+    String dpLink;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -52,14 +61,36 @@ public class Ask_Activity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("userDetails", Context.MODE_PRIVATE);
         userid = sharedPreferences.getString("userMail", null);
 
+        Toast.makeText(this, "onCreate", Toast.LENGTH_SHORT).show();
 
+        //Retrieving user Image / profile data
+        //list = new ArrayList<profile>();
+        refProfile.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot dataSnapshot1:dataSnapshot.getChildren())
+                {
+                    //profile prfl = dataSnapshot.getValue(profile.class);
+//                    profile p = dataSnapshot.getValue(profile.class);
+                    Toast.makeText(Ask_Activity.this, "Dp-> "+dataSnapshot.getChildrenCount(), Toast.LENGTH_SHORT).show();
+//                    if(prfl.getEmail()== userid) {
+//                        dpLink=prfl.getDp().toString();
+//                        Toast.makeText(Ask_Activity.this, "Dp "+dpLink, Toast.LENGTH_SHORT).show();
+//                        //list.add(prfl);
+//                    }
+                }
 
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
-
-
+            }
+        });
+        //refProfile.child("Temp").setValue(null);
     }
+
+
     public void Post(View view)
     {
         String question=etQuestion.getText().toString();
@@ -70,6 +101,7 @@ public class Ask_Activity extends AppCompatActivity {
         String id;
         if(!TextUtils.isEmpty(question))
         {
+
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
             //String id=Ask.push().getKey();
@@ -82,6 +114,7 @@ public class Ask_Activity extends AppCompatActivity {
             dbuser.child("status").setValue(status);
             dbuser.child("postedBy").setValue(userid);
             dbuser.child("postedOn").setValue(date);
+            dbuser.child("dp").setValue(dpLink);
 
 
             Toast.makeText(this,"Question Posted as "+uName,Toast.LENGTH_LONG).show();

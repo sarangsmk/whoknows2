@@ -39,6 +39,7 @@ public class DashboardActivity extends AppCompatActivity {
     private TextView user;
     public static String userName;
     FloatingActionButton fab;
+    FirebaseUser currentUser;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
     FirebaseAuth firebaseAuth;
@@ -69,9 +70,14 @@ public class DashboardActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("userDetails", Context.MODE_PRIVATE);
 
 
+        currentUser = firebaseAuth.getCurrentUser();
+        Toast.makeText(this, "Url->"+currentUser.getPhotoUrl(), Toast.LENGTH_SHORT).show();
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString("userMail",userid);
         editor.commit();
+
+
 
         Intent i=getIntent();
         userName=i.getStringExtra("Email");
