@@ -78,13 +78,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             postedBy = itemView.findViewById(R.id.txtUser);
             proPic = itemView.findViewById(R.id.proPic);
 
-            sharedPreferences =context.getSharedPreferences("questionDetails", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("question",question.getText().toString());
-            editor.putString("description",description.getText().toString());
-            editor.putString("postedOn",postedOn.getText().toString());
-            editor.putString("postedBy",postedBy.getText().toString());
-            editor.commit();
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override

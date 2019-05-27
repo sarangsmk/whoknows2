@@ -105,6 +105,7 @@ public class Ask_Activity extends AppCompatActivity {
 
             Toast.makeText(this,"Question Posted as "+currentUser.getDisplayName(),Toast.LENGTH_LONG).show();
             Intent i=new Intent(Ask_Activity.this,DashboardActivity.class);
+            i.putExtra("postId",id);
             startActivity(i);
         }
         else

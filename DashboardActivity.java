@@ -48,8 +48,8 @@ public class DashboardActivity extends AppCompatActivity implements MyAdapter.On
     SharedPreferences sharedPreferences;
     RecyclerView recyclerView;
     ArrayList<post> list;
-    ArrayList<MyAdapter> list2;
     MyAdapter adapter;
+    String postId;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override

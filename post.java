@@ -1,6 +1,5 @@
 package gq.smktech.whoknows;
 
-import android.net.Uri;
 
 public class post {
     private String question;
