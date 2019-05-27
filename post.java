@@ -8,18 +8,19 @@ public class post {
     private String postedBy;
     private String postedOn;
     private String dp;
-
+    private String postId;
     public post() {
 
     }
 
-    public post(String question, String description, String mediaLink, String postedBy,String postedOn,String dp) {
+    public post(String question, String description, String mediaLink, String postedBy,String postedOn,String dp,String postId) {
         this.question = question;
         this.description = description;
         this.mediaLink = mediaLink;
         this.postedBy = postedBy;
         this.postedOn = postedOn;
         this.dp = dp;
+        this.postId = postId;
     }
 
     public String getQuestion() {
@@ -68,6 +69,14 @@ public class post {
 
     public void setDp(String dp) {
         this.dp = dp;
+    }
+
+    public String getPostId() {
+        return postId;
+    }
+
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
 }

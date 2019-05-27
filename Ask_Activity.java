@@ -101,6 +101,7 @@ public class Ask_Activity extends AppCompatActivity {
             dbuser.child("postedBy").setValue(currentUser.getEmail());
             dbuser.child("postedOn").setValue(date);
             dbuser.child("dp").setValue(currentUser.getPhotoUrl().toString());
+            dbuser.child("postId").setValue(id.toString());
 
 
             Toast.makeText(this,"Question Posted as "+currentUser.getDisplayName(),Toast.LENGTH_LONG).show();

@@ -9,6 +9,12 @@ public class comment {
     public comment() {
 
     }
+    public comment(String comment,String postedBy ,String postedOn,String dp) {
+        this.comment = comment;
+        this.postedBy = postedBy;
+        this.postedOn = postedOn;
+        this.dp = dp;
+    }
 
     public String getComment() {
         return comment;
