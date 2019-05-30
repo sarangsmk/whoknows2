@@ -4,16 +4,16 @@ public class comment {
     private String comment;
     private String postedBy;
     private String postedOn;
-    private String dp;
+    //private String dp;
 
     public comment() {
 
     }
-    public comment(String comment,String postedBy ,String postedOn,String dp) {
+    public comment(String comment,String postedBy ,String postedOn) {
         this.comment = comment;
         this.postedBy = postedBy;
         this.postedOn = postedOn;
-        this.dp = dp;
+        ///this.dp = dp;
     }
 
     public String getComment() {
@@ -40,11 +40,5 @@ public class comment {
         this.postedOn = postedOn;
     }
 
-    public String getDp() {
-        return dp;
-    }
 
-    public void setDp(String dp) {
-        this.dp = dp;
-    }
 }
