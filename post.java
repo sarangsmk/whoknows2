@@ -9,11 +9,12 @@ public class post {
     private String postedOn;
     private String dp;
     private String postId;
+    private String mobile;
     public post() {
 
     }
 
-    public post(String question, String description, String mediaLink, String postedBy,String postedOn,String dp,String postId) {
+    public post(String question, String description, String mediaLink, String postedBy,String postedOn,String dp,String postId,String mobile) {
         this.question = question;
         this.description = description;
         this.mediaLink = mediaLink;
@@ -21,6 +22,7 @@ public class post {
         this.postedOn = postedOn;
         this.dp = dp;
         this.postId = postId;
+        this.mobile=mobile;
     }
 
     public String getQuestion() {
@@ -65,6 +67,14 @@ public class post {
 
     public String getDp() {
         return dp;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 
     public void setDp(String dp) {

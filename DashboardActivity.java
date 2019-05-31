@@ -186,6 +186,7 @@ public class DashboardActivity extends AppCompatActivity implements MyAdapter.On
         detailIntent.putExtra("postedOn",clickedItem.getPostedOn());
         detailIntent.putExtra("dp",clickedItem.getDp());
         detailIntent.putExtra("postId",clickedItem.getPostId());
+        detailIntent.putExtra("mobile",clickedItem.getMobile());
         startActivity(detailIntent);
     }
 }

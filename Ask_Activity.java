@@ -1,5 +1,6 @@
 package gq.smktech.whoknows;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -29,15 +30,18 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class Ask_Activity extends AppCompatActivity {
-    EditText etQuestion,etDescription;
+public class Ask_Activity extends AppCompatActivity implements activity_dialog.DialogListner{
+    EditText etQuestion,etDescription,txtMobile;
     public TextView user;
     CircleImageView userPhoto;
     Button Post;
+    String mobile;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Posts");
     DatabaseReference refProfile = FirebaseDatabase.getInstance().getReferenceFromUrl("https://who-knows-ccf3c.firebaseio.com/Users");
@@ -64,6 +68,7 @@ public class Ask_Activity extends AppCompatActivity {
         userPhoto = findViewById(R.id.userPhoto);
         etQuestion=(EditText)findViewById(R.id.question);
         etDescription=(EditText)findViewById(R.id.description);
+        txtMobile = findViewById(R.id.mobile);
         Post=(Button)findViewById(R.id.btnPost);
 
         user.setText(currentUser.getDisplayName());
@@ -81,14 +86,18 @@ public class Ask_Activity extends AppCompatActivity {
     {
         String question=etQuestion.getText().toString();
         String description=etDescription.getText().toString();
+        String mobile = txtMobile.getText().toString();
         //String uName=DashboardActivity.userName.toString();
         //uName=uName.replace(".", ",");
         String status="Open";
         String id;
-        if(!TextUtils.isEmpty(question))
+        if(!TextUtils.isEmpty(question) && !TextUtils.isEmpty((description)))
         {
-
             String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+            //ask for offline answer
+            //openDialog();
+
 
             //String id=Ask.push().getKey();
             //Ask ask=new Ask(question,description,uName);
@@ -102,6 +111,7 @@ public class Ask_Activity extends AppCompatActivity {
             dbuser.child("postedOn").setValue(date);
             dbuser.child("dp").setValue(currentUser.getPhotoUrl().toString());
             dbuser.child("postId").setValue(id.toString());
+            dbuser.child("mobile").setValue(mobile);
 
 
             Toast.makeText(this,"Question Posted as "+currentUser.getDisplayName(),Toast.LENGTH_LONG).show();
@@ -115,8 +125,18 @@ public class Ask_Activity extends AppCompatActivity {
         }
     }
 
+    private void openDialog() {
+
+        activity_dialog dialog = new activity_dialog();
+        dialog.show(getSupportFragmentManager(),"Example dialog");
 
 
+    }
 
+
+    @Override
+    public void applyTexts(String mob) {
+        mobile = mob;
+    }
 }
 

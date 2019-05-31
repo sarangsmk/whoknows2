@@ -1,5 +1,6 @@
 package gq.smktech.whoknows;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -39,7 +41,7 @@ public class CommentActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     FirebaseUser currentUser;
     commentAdapter adapter;
-    String postId,date,id;
+    String postId,date,id,mobile,postedBy,question,postedOn;
     ArrayList<comment> list;
 
     DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl("https://who-knows-ccf3c.firebaseio.com/Comments");
@@ -64,12 +66,13 @@ public class CommentActivity extends AppCompatActivity {
 
         //getting selected Questions details
         Intent intent = getIntent();
-        String question = intent.getStringExtra("question");
+        question = intent.getStringExtra("question");
         String description = intent.getStringExtra("description");
-        String postedBy = intent.getStringExtra("postedBy");
-        String postedOn = intent.getStringExtra("postedOn");
+        postedBy = intent.getStringExtra("postedBy");
+        postedOn = intent.getStringExtra("postedOn");
         String dp = intent.getStringExtra("dp");
         postId = intent.getStringExtra("postId");
+        mobile = intent.getStringExtra("mobile");
 
         //setting selected questions details
         Glide.with(CommentActivity.this).load(dp).into(proPic);
@@ -156,9 +159,27 @@ public class CommentActivity extends AppCompatActivity {
 //                }
 //            });
             Toast.makeText(this, "Thanks For your Help", Toast.LENGTH_SHORT).show();
+
+
+            if(mobile!=""||mobile!=null)
+            {
+                String msgContent = "Hello "+postedBy+"\n"+"Your question '"+question+"'"+"\n"+"Got an answer\n"+"\nAnswer\n"+txtComment.getText().toString()+"\n"+"\n-From\n"+currentUser.getDisplayName()+"\n Please open Who Knows app for more details.\n Hope This works.";
+                Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
+                PendingIntent pi= PendingIntent.getActivity(getApplicationContext(), 0, intent,0);
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(mobile, null, msgContent, pi, null);
+                Toast.makeText(getApplicationContext(), "SMS Sent!",
+                        Toast.LENGTH_LONG).show();
+            }
             txtComment.setText("");
+
+
+
+
             Intent i=new Intent(CommentActivity.this,DashboardActivity.class);
             startActivity(i);
+
+            Toast.makeText(this, "Mobile->"+mobile, Toast.LENGTH_SHORT).show();
 
         }
         else
